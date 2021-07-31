@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+
+	"github.com/n4to4/glox/scanner"
 )
 
 func main() {
@@ -36,24 +38,26 @@ func runPrompt() {
 }
 
 func run(source string) {
-	scanner := Scanner{source}
-	tokens := scanner.scanTokens()
+	scanner := scanner.NewScanner(source)
+	tokens := scanner.ScanTokens()
 
 	for _, token := range tokens {
 		fmt.Println(token)
 	}
 }
 
-// Scanner
+// error
 
-type Scanner struct {
-	source string
+func errorReport(line int, message string) {
+	report(line, "", message)
 }
 
-func (s *Scanner) scanTokens() []Token {
-	return nil
+func report(line int, where, message string) {
+	fmt.Fprintf(os.Stderr, "[line %d] Error %s: %s", line, where, message)
 }
 
-// token
+// Lox
 
-type Token = string
+type Lox struct {
+	hadError bool
+}
