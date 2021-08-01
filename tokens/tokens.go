@@ -5,11 +5,11 @@ import "fmt"
 type Token struct {
 	Ttype   string
 	lexeme  string
-	Literal string
+	Literal interface{}
 	line    int
 }
 
-func NewToken(ttype, lexeme, literal string, line int) Token {
+func NewToken(ttype, lexeme string, literal interface{}, line int) Token {
 	return Token{ttype, lexeme, literal, line}
 }
 

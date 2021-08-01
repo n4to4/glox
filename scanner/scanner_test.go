@@ -51,6 +51,35 @@ func TestScanString(t *testing.T) {
 	}
 }
 
+func TestScanNumber(t *testing.T) {
+	cases := []struct {
+		source   string
+		expected float64
+	}{
+		{"123", 123},
+		{"3.14", 3.14},
+	}
+
+	for _, cc := range cases {
+		t.Run(cc.source, func(t *testing.T) {
+			toks := NewScanner(cc.source).ScanTokens()
+
+			if len(toks) != 2 {
+				t.Fatalf("len want %d got %d", 2, len(toks))
+			}
+
+			tok := toks[0]
+			if tok.Ttype != tokens.NUMBER {
+				t.Errorf("token type want %q got %q", tokens.NUMBER, tok.Ttype)
+			}
+
+			if num, ok := tok.Literal.(float64); !ok || num != cc.expected {
+				t.Errorf("want %f got %f", cc.expected, num)
+			}
+		})
+	}
+}
+
 func assertTokenTypes(t *testing.T, toks []tokens.Token, ttypes ...string) {
 	t.Helper()
 

@@ -1,6 +1,8 @@
 package scanner
 
 import (
+	"strconv"
+
 	"github.com/n4to4/glox/error"
 	"github.com/n4to4/glox/tokens"
 )
@@ -96,7 +98,11 @@ func (s *Scanner) scanToken() {
 	case `"`:
 		s.scanString()
 	default:
-		error.ErrorReport(s.line, "Unexpected character.")
+		if isDigit(c) {
+			s.number()
+		} else {
+			error.ErrorReport(s.line, "Unexpected character.")
+		}
 	}
 }
 
@@ -106,9 +112,9 @@ func (s *Scanner) advance() string {
 	return c
 }
 
-func (s *Scanner) addToken(ttype, literal string) {
-	text := s.source[s.start:s.current]
-	s.tokens = append(s.tokens, tokens.NewToken(ttype, text, literal, s.line))
+func (s *Scanner) addToken(ttype string, literal interface{}) {
+	lexeme := s.source[s.start:s.current]
+	s.tokens = append(s.tokens, tokens.NewToken(ttype, lexeme, literal, s.line))
 }
 
 func (s *Scanner) match(expected string) bool {
@@ -128,6 +134,13 @@ func (s *Scanner) peek() string {
 	} else {
 		return s.source[s.current : s.current+1]
 	}
+}
+
+func (s *Scanner) peekNext() string {
+	if s.current+1 >= len(s.source) {
+		return ""
+	}
+	return s.source[s.current+1 : s.current+2]
 }
 
 func (s *Scanner) isAtEnd() bool {
@@ -153,4 +166,31 @@ func (s *Scanner) scanString() {
 	// Trim the surrounding quotes.
 	value := s.source[s.start+1 : s.current-1]
 	s.addToken(tokens.STRING, value)
+}
+
+func isDigit(str string) bool {
+	if len(str) != 1 {
+		return false
+	}
+
+	c := str[0]
+	return '0' <= c && c <= '9'
+}
+
+func (s *Scanner) number() {
+	for isDigit(s.peek()) {
+		s.advance()
+	}
+
+	if s.peek() == "." && isDigit(s.peekNext()) {
+		s.advance()
+	}
+
+	for isDigit(s.peek()) {
+		s.advance()
+	}
+
+	lexeme := s.source[s.start:s.current]
+	f, _ := strconv.ParseFloat(lexeme, 64)
+	s.addToken(tokens.NUMBER, f)
 }
