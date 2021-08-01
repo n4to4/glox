@@ -14,8 +14,8 @@ type Scanner struct {
 	line    int
 }
 
-func NewScanner(source string) Scanner {
-	return Scanner{
+func NewScanner(source string) *Scanner {
+	return &Scanner{
 		source:  source,
 		tokens:  []tokens.Token{},
 		start:   0,
