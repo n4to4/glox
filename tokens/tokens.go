@@ -4,7 +4,7 @@ import "fmt"
 
 type Token struct {
 	Ttype   string
-	lexeme  string
+	Lexeme  string
 	Literal interface{}
 	line    int
 }
@@ -14,7 +14,7 @@ func NewToken(ttype, lexeme string, literal interface{}, line int) Token {
 }
 
 func (t *Token) String() string {
-	return fmt.Sprintf("<token %s %s %s>", t.Ttype, t.lexeme, t.Literal)
+	return fmt.Sprintf("<token %s %s %s>", t.Ttype, t.Lexeme, t.Literal)
 }
 
 const (

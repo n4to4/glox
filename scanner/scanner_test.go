@@ -80,6 +80,38 @@ func TestScanNumber(t *testing.T) {
 	}
 }
 
+func TestIdentifier(t *testing.T) {
+	cases := []struct {
+		source string
+		lexeme string
+		ttype  string
+	}{
+		{"id", "id", tokens.IDENTIFIER},
+		{"name", "name", tokens.IDENTIFIER},
+		{"or", "or", tokens.OR},
+		{" if ", "if", tokens.IF},
+	}
+
+	for _, cc := range cases {
+		t.Run(cc.source, func(t *testing.T) {
+			toks := NewScanner(cc.source).ScanTokens()
+
+			if len(toks) != 2 {
+				t.Fatalf("len want %d got %d", 2, len(toks))
+			}
+
+			tok := toks[0]
+			if tok.Ttype != cc.ttype {
+				t.Errorf("token type want %q got %q", cc.ttype, tok.Ttype)
+			}
+
+			if tok.Lexeme != cc.lexeme {
+				t.Errorf("lexeme want %q got %q", cc.lexeme, tok.Lexeme)
+			}
+		})
+	}
+}
+
 func assertTokenTypes(t *testing.T, toks []tokens.Token, ttypes ...string) {
 	t.Helper()
 

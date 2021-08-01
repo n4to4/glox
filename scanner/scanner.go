@@ -14,16 +14,42 @@ type Scanner struct {
 	start   int
 	current int
 	line    int
+
+	keywords map[string]string
 }
 
 func NewScanner(source string) *Scanner {
 	return &Scanner{
-		source:  source,
-		tokens:  []tokens.Token{},
-		start:   0,
-		current: 0,
-		line:    1,
+		source:   source,
+		tokens:   []tokens.Token{},
+		start:    0,
+		current:  0,
+		line:     1,
+		keywords: newKeywords(),
 	}
+}
+
+func newKeywords() map[string]string {
+	var ks = make(map[string]string)
+
+	ks["and"] = tokens.AND
+	ks["class"] = tokens.CLASS
+	ks["else"] = tokens.ELSE
+	ks["false"] = tokens.FALSE
+	ks["for"] = tokens.FOR
+	ks["fun"] = tokens.FUN
+	ks["if"] = tokens.IF
+	ks["nil"] = tokens.NIL
+	ks["or"] = tokens.OR
+	ks["print"] = tokens.PRINT
+	ks["return"] = tokens.RETURN
+	ks["super"] = tokens.SUPER
+	ks["this"] = tokens.THIS
+	ks["true"] = tokens.TRUE
+	ks["var"] = tokens.VAR
+	ks["while"] = tokens.WHILE
+
+	return ks
 }
 
 func (s *Scanner) ScanTokens() []tokens.Token {
@@ -100,6 +126,8 @@ func (s *Scanner) scanToken() {
 	default:
 		if isDigit(c) {
 			s.number()
+		} else if isAlpha(c) {
+			s.identifier()
 		} else {
 			error.ErrorReport(s.line, "Unexpected character.")
 		}
@@ -168,15 +196,6 @@ func (s *Scanner) scanString() {
 	s.addToken(tokens.STRING, value)
 }
 
-func isDigit(str string) bool {
-	if len(str) != 1 {
-		return false
-	}
-
-	c := str[0]
-	return '0' <= c && c <= '9'
-}
-
 func (s *Scanner) number() {
 	for isDigit(s.peek()) {
 		s.advance()
@@ -193,4 +212,39 @@ func (s *Scanner) number() {
 	lexeme := s.source[s.start:s.current]
 	f, _ := strconv.ParseFloat(lexeme, 64)
 	s.addToken(tokens.NUMBER, f)
+}
+
+func (s *Scanner) identifier() {
+	for isAlphaNumeric(s.peek()) {
+		s.advance()
+	}
+
+	text := s.source[s.start:s.current]
+	ttype, ok := s.keywords[text]
+	if !ok {
+		ttype = tokens.IDENTIFIER
+	}
+	s.addToken(ttype, nil)
+}
+
+func isDigit(str string) bool {
+	if len(str) != 1 {
+		return false
+	}
+
+	c := str[0]
+	return '0' <= c && c <= '9'
+}
+
+func isAlpha(str string) bool {
+	if len(str) != 1 {
+		return false
+	}
+
+	c := str[0]
+	return c == '_' || 'a' <= c && c <= 'z' || 'A' <= c && c <= 'Z'
+}
+
+func isAlphaNumeric(str string) bool {
+	return isDigit(str) || isAlpha(str)
 }
