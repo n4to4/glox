@@ -151,6 +151,6 @@ func (s *Scanner) scanString() {
 	s.advance()
 
 	// Trim the surrounding quotes.
-	value := s.source[s.start+1 : s.current]
+	value := s.source[s.start+1 : s.current-1]
 	s.addToken(tokens.STRING, value)
 }

@@ -21,7 +21,7 @@ func TestScanner(t *testing.T) {
 			tokens.LESS_EQUAL,
 			tokens.EOF,
 		}},
-		{`"string"`, []string{tokens.STRING, tokens.EOF}},
+		{`"string"!=`, []string{tokens.STRING, tokens.BANG_EQUAL, tokens.EOF}},
 	}
 
 	for _, cc := range cases {
@@ -29,6 +29,25 @@ func TestScanner(t *testing.T) {
 		t.Run(fmt.Sprintf("with source %q", cc.source), func(t *testing.T) {
 			assertTokenTypes(t, toks, cc.expected...)
 		})
+	}
+}
+
+func TestScanString(t *testing.T) {
+	source := `"string"`
+	toks := NewScanner(source).ScanTokens()
+
+	if len(toks) != 2 {
+		t.Fatalf("len want %d got %d", 2, len(toks))
+	}
+
+	tok := toks[0]
+	if tok.Ttype != tokens.STRING {
+		t.Errorf("token type want %q got %q", tokens.STRING, tok.Ttype)
+	}
+
+	wantLiteral := "string"
+	if tok.Literal != wantLiteral {
+		t.Errorf("literal want %q got %q", wantLiteral, tok.Literal)
 	}
 }
 
