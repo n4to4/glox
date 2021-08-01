@@ -3,18 +3,18 @@ package tokens
 import "fmt"
 
 type Token struct {
-	ttype   string
+	Ttype   string
 	lexeme  string
 	literal string
 	line    int
 }
 
 func NewToken(ttype, lexeme, literal string, line int) Token {
-	return Token{}
+	return Token{ttype, lexeme, literal, line}
 }
 
 func (t *Token) String() string {
-	return fmt.Sprintf("%s %s %s", t.ttype, t.lexeme, t.literal)
+	return fmt.Sprintf("<token %s %s %s>", t.Ttype, t.lexeme, t.literal)
 }
 
 const (
