@@ -9,10 +9,22 @@ import (
 	"strings"
 )
 
-func main() {}
+func main() {
+	if len(os.Args) != 2 {
+		log.Fatal("Usage: generate <outout directory>")
+	}
+
+	outputDir := os.Args[1]
+	defineAst(outputDir, "Expr", []string{
+		"Binary   : left Expr, operator tokens.Token, right Expr",
+		"Grouping : expression Expr",
+		"Literal  : value interface{}",
+		"Unary    : operator tokens.Token, right Expr",
+	})
+}
 
 func defineAst(outputDir, baseName string, types []string) {
-	path := fmt.Sprintf("%s/%s.go", outputDir, baseName)
+	path := fmt.Sprintf("%s/%s.go", outputDir, strings.ToLower(baseName))
 	file, err := os.Create(path)
 	if err != nil {
 		log.Fatalf("cannot open file %q, %v\n", path, err)
@@ -21,10 +33,13 @@ func defineAst(outputDir, baseName string, types []string) {
 
 	w := bufio.NewWriter(file)
 	generateAst(w, baseName, types)
+	w.Flush()
 }
 
 func generateAst(w io.StringWriter, baseName string, types []string) {
 	w.WriteString("package lox\n")
+	w.WriteString("\n")
+	w.WriteString(`import "github.com/n4to4/glox/tokens"` + "\n")
 	w.WriteString("\n")
 	w.WriteString(fmt.Sprintf("type %s interface {\n", baseName))
 	w.WriteString("\tTokenLiteral() string\n")

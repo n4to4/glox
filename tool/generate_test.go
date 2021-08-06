@@ -17,6 +17,8 @@ func TestGenerateAst(t *testing.T) {
 	got := w.String()
 	want := `package lox
 
+import "github.com/n4to4/glox/tokens"
+
 type Expr interface {
 	TokenLiteral() string
 }
