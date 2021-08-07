@@ -1,8 +1,18 @@
 package main
 
+import "errors"
+
+var (
+	ParseError = errors.New("parse error")
+)
+
 type Parser struct {
 	tokens  []Token
 	current int
+}
+
+func (p *Parser) Parse() Expr {
+	return p.Expression()
 }
 
 func (p *Parser) Expression() Expr {
@@ -83,7 +93,7 @@ func (p *Parser) Primary() Expr {
 		return Grouping{expr}
 	}
 
-	return nil
+	panic("Expect expression.")
 }
 
 func (p *Parser) match(types ...TokenType) bool {
@@ -123,10 +133,32 @@ func (p *Parser) previous() Token {
 	return p.tokens[p.current-1]
 }
 
-func (p *Parser) consume(ttype TokenType, message string) Token {
+func (p *Parser) consume(ttype TokenType, message string) (Token, error) {
 	if p.check(ttype) {
-		return p.advance()
+		return p.advance(), nil
 	}
 
-	panic("parse error")
+	return Token{}, p.parseError(p.peek(), message)
+}
+
+func (p *Parser) parseError(token Token, message string) error {
+	ReportError(token, message)
+	return ParseError
+}
+
+func (p *Parser) synchronize() {
+	p.advance()
+
+	for !p.isAtEnd() {
+		if p.previous().Ttype == SEMICOLON {
+			return
+		}
+
+		switch p.peek().Ttype {
+		case CLASS, FUN, VAR, FOR, IF, WHILE, PRINT, RETURN:
+			return
+		}
+
+		p.advance()
+	}
 }

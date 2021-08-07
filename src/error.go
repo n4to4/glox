@@ -12,3 +12,11 @@ func ErrorReport(line int, message string) {
 func report(line int, where, message string) {
 	fmt.Fprintf(os.Stderr, "[line %d] Error %s: %s", line, where, message)
 }
+
+func ReportError(token Token, message string) {
+	if token.Ttype == EOF {
+		report(token.line, " at end", message)
+	} else {
+		report(token.line, " at '"+token.Lexeme+"'", message)
+	}
+}
