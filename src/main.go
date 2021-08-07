@@ -47,7 +47,8 @@ func run(source string) {
 	parser := Parser{tokens: tokens}
 	expr := parser.Parse()
 
-	fmt.Println("")
-	fmt.Println("print expr:")
-	fmt.Println(expr)
+	printer := AstPrinter{}
+
+	fmt.Println("\nprint expr:")
+	fmt.Println(printer.Print(expr))
 }
