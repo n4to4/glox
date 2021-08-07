@@ -1,15 +1,12 @@
-package scanner
+package main
 
 import (
 	"strconv"
-
-	"github.com/n4to4/glox/error"
-	"github.com/n4to4/glox/tokens"
 )
 
 type Scanner struct {
 	source string
-	tokens []tokens.Token
+	tokens []Token
 
 	start   int
 	current int
@@ -21,7 +18,7 @@ type Scanner struct {
 func NewScanner(source string) *Scanner {
 	return &Scanner{
 		source:   source,
-		tokens:   []tokens.Token{},
+		tokens:   []Token{},
 		start:    0,
 		current:  0,
 		line:     1,
@@ -32,33 +29,33 @@ func NewScanner(source string) *Scanner {
 func newKeywords() map[string]string {
 	var ks = make(map[string]string)
 
-	ks["and"] = tokens.AND
-	ks["class"] = tokens.CLASS
-	ks["else"] = tokens.ELSE
-	ks["false"] = tokens.FALSE
-	ks["for"] = tokens.FOR
-	ks["fun"] = tokens.FUN
-	ks["if"] = tokens.IF
-	ks["nil"] = tokens.NIL
-	ks["or"] = tokens.OR
-	ks["print"] = tokens.PRINT
-	ks["return"] = tokens.RETURN
-	ks["super"] = tokens.SUPER
-	ks["this"] = tokens.THIS
-	ks["true"] = tokens.TRUE
-	ks["var"] = tokens.VAR
-	ks["while"] = tokens.WHILE
+	ks["and"] = AND
+	ks["class"] = CLASS
+	ks["else"] = ELSE
+	ks["false"] = FALSE
+	ks["for"] = FOR
+	ks["fun"] = FUN
+	ks["if"] = IF
+	ks["nil"] = NIL
+	ks["or"] = OR
+	ks["print"] = PRINT
+	ks["return"] = RETURN
+	ks["super"] = SUPER
+	ks["this"] = THIS
+	ks["true"] = TRUE
+	ks["var"] = VAR
+	ks["while"] = WHILE
 
 	return ks
 }
 
-func (s *Scanner) ScanTokens() []tokens.Token {
+func (s *Scanner) ScanTokens() []Token {
 	for !s.isAtEnd() {
 		s.start = s.current
 		s.scanToken()
 	}
 
-	s.tokens = append(s.tokens, tokens.NewToken(tokens.EOF, "", "", s.line))
+	s.tokens = append(s.tokens, NewToken(EOF, "", "", s.line))
 	return s.tokens
 }
 
@@ -67,48 +64,48 @@ func (s *Scanner) scanToken() {
 
 	switch c {
 	case "(":
-		s.addToken(tokens.LEFT_PAREN, "(")
+		s.addToken(LEFT_PAREN, "(")
 	case ")":
-		s.addToken(tokens.RIGHT_PAREN, ")")
+		s.addToken(RIGHT_PAREN, ")")
 	case "{":
-		s.addToken(tokens.LEFT_BRACE, "{")
+		s.addToken(LEFT_BRACE, "{")
 	case "}":
-		s.addToken(tokens.RIGHT_BRACE, "}")
+		s.addToken(RIGHT_BRACE, "}")
 	case ",":
-		s.addToken(tokens.COMMA, ",")
+		s.addToken(COMMA, ",")
 	case ".":
-		s.addToken(tokens.DOT, ".")
+		s.addToken(DOT, ".")
 	case "-":
-		s.addToken(tokens.MINUS, "-")
+		s.addToken(MINUS, "-")
 	case "+":
-		s.addToken(tokens.PLUS, "+")
+		s.addToken(PLUS, "+")
 	case ";":
-		s.addToken(tokens.SEMICOLON, ";")
+		s.addToken(SEMICOLON, ";")
 	case "*":
-		s.addToken(tokens.STAR, "*")
+		s.addToken(STAR, "*")
 	case "!":
 		if s.match("=") {
-			s.addToken(tokens.BANG_EQUAL, "!=")
+			s.addToken(BANG_EQUAL, "!=")
 		} else {
-			s.addToken(tokens.BANG, "!")
+			s.addToken(BANG, "!")
 		}
 	case "=":
 		if s.match("=") {
-			s.addToken(tokens.EQUAL_EQUAL, "==")
+			s.addToken(EQUAL_EQUAL, "==")
 		} else {
-			s.addToken(tokens.EQUAL, "=")
+			s.addToken(EQUAL, "=")
 		}
 	case "<":
 		if s.match("=") {
-			s.addToken(tokens.LESS_EQUAL, "<=")
+			s.addToken(LESS_EQUAL, "<=")
 		} else {
-			s.addToken(tokens.LESS, "<")
+			s.addToken(LESS, "<")
 		}
 	case ">":
 		if s.match("=") {
-			s.addToken(tokens.GREATER_EQUAL, ">=")
+			s.addToken(GREATER_EQUAL, ">=")
 		} else {
-			s.addToken(tokens.GREATER, ">")
+			s.addToken(GREATER, ">")
 		}
 	case "/":
 		if s.match("/") {
@@ -116,7 +113,7 @@ func (s *Scanner) scanToken() {
 				s.advance()
 			}
 		} else {
-			s.addToken(tokens.SLASH, "/")
+			s.addToken(SLASH, "/")
 		}
 	case " ", "\r", "\t":
 	case "\n":
@@ -129,7 +126,7 @@ func (s *Scanner) scanToken() {
 		} else if isAlpha(c) {
 			s.identifier()
 		} else {
-			error.ErrorReport(s.line, "Unexpected character.")
+			ErrorReport(s.line, "Unexpected character.")
 		}
 	}
 }
@@ -142,7 +139,7 @@ func (s *Scanner) advance() string {
 
 func (s *Scanner) addToken(ttype string, literal interface{}) {
 	lexeme := s.source[s.start:s.current]
-	s.tokens = append(s.tokens, tokens.NewToken(ttype, lexeme, literal, s.line))
+	s.tokens = append(s.tokens, NewToken(ttype, lexeme, literal, s.line))
 }
 
 func (s *Scanner) match(expected string) bool {
@@ -184,7 +181,7 @@ func (s *Scanner) scanString() {
 	}
 
 	if s.isAtEnd() {
-		error.ErrorReport(s.line, "Unterminated string.")
+		ErrorReport(s.line, "Unterminated string.")
 		return
 	}
 
@@ -193,7 +190,7 @@ func (s *Scanner) scanString() {
 
 	// Trim the surrounding quotes.
 	value := s.source[s.start+1 : s.current-1]
-	s.addToken(tokens.STRING, value)
+	s.addToken(STRING, value)
 }
 
 func (s *Scanner) number() {
@@ -211,7 +208,7 @@ func (s *Scanner) number() {
 
 	lexeme := s.source[s.start:s.current]
 	f, _ := strconv.ParseFloat(lexeme, 64)
-	s.addToken(tokens.NUMBER, f)
+	s.addToken(NUMBER, f)
 }
 
 func (s *Scanner) identifier() {
@@ -222,7 +219,7 @@ func (s *Scanner) identifier() {
 	text := s.source[s.start:s.current]
 	ttype, ok := s.keywords[text]
 	if !ok {
-		ttype = tokens.IDENTIFIER
+		ttype = IDENTIFIER
 	}
 	s.addToken(ttype, nil)
 }

@@ -1,10 +1,6 @@
 package main
 
-import (
-	"strings"
-	"testing"
-)
-
+/*
 func TestGenerateAst(t *testing.T) {
 	w := &strings.Builder{}
 	generateAst(w, "Expr", []string{
@@ -36,3 +32,4 @@ func (x *Binary) TokenLiteral() string { return "" }
 		//t.Errorf("want %s, got %s", want, got)
 	}
 }
+*/

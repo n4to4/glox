@@ -1,10 +1,8 @@
-package scanner
+package main
 
 import (
 	"fmt"
 	"testing"
-
-	"github.com/n4to4/glox/tokens"
 )
 
 func TestScanner(t *testing.T) {
@@ -12,16 +10,16 @@ func TestScanner(t *testing.T) {
 		source   string
 		expected []string
 	}{
-		{"(", []string{tokens.LEFT_PAREN, tokens.EOF}},
-		{",.-", []string{tokens.COMMA, tokens.DOT, tokens.MINUS, tokens.EOF}},
+		{"(", []string{LEFT_PAREN, EOF}},
+		{",.-", []string{COMMA, DOT, MINUS, EOF}},
 		{"== != >= <=", []string{
-			tokens.EQUAL_EQUAL,
-			tokens.BANG_EQUAL,
-			tokens.GREATER_EQUAL,
-			tokens.LESS_EQUAL,
-			tokens.EOF,
+			EQUAL_EQUAL,
+			BANG_EQUAL,
+			GREATER_EQUAL,
+			LESS_EQUAL,
+			EOF,
 		}},
-		{`"string"!=`, []string{tokens.STRING, tokens.BANG_EQUAL, tokens.EOF}},
+		{`"string"!=`, []string{STRING, BANG_EQUAL, EOF}},
 	}
 
 	for _, cc := range cases {
@@ -41,8 +39,8 @@ func TestScanString(t *testing.T) {
 	}
 
 	tok := toks[0]
-	if tok.Ttype != tokens.STRING {
-		t.Errorf("token type want %q got %q", tokens.STRING, tok.Ttype)
+	if tok.Ttype != STRING {
+		t.Errorf("token type want %q got %q", STRING, tok.Ttype)
 	}
 
 	wantLiteral := "string"
@@ -69,8 +67,8 @@ func TestScanNumber(t *testing.T) {
 			}
 
 			tok := toks[0]
-			if tok.Ttype != tokens.NUMBER {
-				t.Errorf("token type want %q got %q", tokens.NUMBER, tok.Ttype)
+			if tok.Ttype != NUMBER {
+				t.Errorf("token type want %q got %q", NUMBER, tok.Ttype)
 			}
 
 			if num, ok := tok.Literal.(float64); !ok || num != cc.expected {
@@ -86,10 +84,10 @@ func TestIdentifier(t *testing.T) {
 		lexeme string
 		ttype  string
 	}{
-		{"id", "id", tokens.IDENTIFIER},
-		{"name", "name", tokens.IDENTIFIER},
-		{"or", "or", tokens.OR},
-		{" if ", "if", tokens.IF},
+		{"id", "id", IDENTIFIER},
+		{"name", "name", IDENTIFIER},
+		{"or", "or", OR},
+		{" if ", "if", IF},
 	}
 
 	for _, cc := range cases {
@@ -112,7 +110,7 @@ func TestIdentifier(t *testing.T) {
 	}
 }
 
-func assertTokenTypes(t *testing.T, toks []tokens.Token, ttypes ...string) {
+func assertTokenTypes(t *testing.T, toks []Token, ttypes ...string) {
 	t.Helper()
 
 	if len(toks) != len(ttypes) {

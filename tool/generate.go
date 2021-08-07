@@ -16,10 +16,10 @@ func main() {
 
 	outputDir := os.Args[1]
 	defineAst(outputDir, "Expr", []string{
-		"Binary   : left Expr, operator tokens.Token, right Expr",
+		"Binary   : left Expr, operator Token, right Expr",
 		"Grouping : expression Expr",
 		"Literal  : value interface{}",
-		"Unary    : operator tokens.Token, right Expr",
+		"Unary    : operator Token, right Expr",
 	})
 }
 
@@ -37,9 +37,7 @@ func defineAst(outputDir, baseName string, types []string) {
 }
 
 func generateAst(w io.StringWriter, baseName string, types []string) {
-	w.WriteString("package lox\n")
-	w.WriteString("\n")
-	w.WriteString(`import "github.com/n4to4/glox/tokens"` + "\n")
+	w.WriteString("package main\n")
 	w.WriteString("\n")
 	w.WriteString(fmt.Sprintf("type %s interface {\n", baseName))
 	w.WriteString("\tTokenLiteral() string\n")

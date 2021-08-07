@@ -1,9 +1,7 @@
-package lox
+package main
 
 import (
 	"fmt"
-
-	"github.com/n4to4/glox/tokens"
 )
 
 type Lox struct {
@@ -13,10 +11,10 @@ type Lox struct {
 func LoxMain() {
 	expression := Binary{
 		Unary{
-			tokens.NewToken(tokens.MINUS, "-", nil, 1),
+			NewToken(MINUS, "-", nil, 1),
 			Literal{"123"},
 		},
-		tokens.NewToken(tokens.STAR, "*", nil, 1),
+		NewToken(STAR, "*", nil, 1),
 		Grouping{
 			Literal{"45.67"},
 		},

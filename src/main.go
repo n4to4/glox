@@ -5,13 +5,10 @@ import (
 	"fmt"
 	"log"
 	"os"
-
-	"github.com/n4to4/glox/lox"
-	"github.com/n4to4/glox/scanner"
 )
 
 func main() {
-	lox.LoxMain()
+	LoxMain()
 
 	//if len(os.Args) > 2 {
 	//	fmt.Fprintln(os.Stderr, "Usage: glox [script]")
@@ -41,7 +38,7 @@ func runPrompt() {
 }
 
 func run(source string) {
-	scanner := scanner.NewScanner(source)
+	scanner := NewScanner(source)
 	tokens := scanner.ScanTokens()
 
 	for _, token := range tokens {
