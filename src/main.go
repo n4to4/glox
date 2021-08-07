@@ -8,16 +8,14 @@ import (
 )
 
 func main() {
-	LoxMain()
-
-	//if len(os.Args) > 2 {
-	//	fmt.Fprintln(os.Stderr, "Usage: glox [script]")
-	//	os.Exit(64)
-	//} else if len(os.Args) == 2 {
-	//	runFile(os.Args[1])
-	//} else {
-	//	runPrompt()
-	//}
+	if len(os.Args) > 2 {
+		fmt.Fprintln(os.Stderr, "Usage: glox [script]")
+		os.Exit(64)
+	} else if len(os.Args) == 2 {
+		runFile(os.Args[1])
+	} else {
+		runPrompt()
+	}
 }
 
 func runFile(file string) {
