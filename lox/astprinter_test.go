@@ -1,16 +1,12 @@
 package lox
 
 import (
-	"fmt"
+	"testing"
 
 	"github.com/n4to4/glox/tokens"
 )
 
-type Lox struct {
-	//hadError bool
-}
-
-func LoxMain() {
+func TestAstPrinter(t *testing.T) {
 	expression := Binary{
 		Unary{
 			tokens.NewToken(tokens.MINUS, "-", nil, 1),
@@ -23,5 +19,10 @@ func LoxMain() {
 	}
 
 	p := AstPrinter{}
-	fmt.Println(p.Print(&expression))
+	got := p.Print(expression)
+	want := "(* (- 123) (group 45.67))"
+
+	if want != got {
+		t.Errorf("want %v got %v", want, got)
+	}
 }

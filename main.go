@@ -6,18 +6,21 @@ import (
 	"log"
 	"os"
 
+	"github.com/n4to4/glox/lox"
 	"github.com/n4to4/glox/scanner"
 )
 
 func main() {
-	if len(os.Args) > 2 {
-		fmt.Fprintln(os.Stderr, "Usage: glox [script]")
-		os.Exit(64)
-	} else if len(os.Args) == 2 {
-		runFile(os.Args[1])
-	} else {
-		runPrompt()
-	}
+	lox.LoxMain()
+
+	//if len(os.Args) > 2 {
+	//	fmt.Fprintln(os.Stderr, "Usage: glox [script]")
+	//	os.Exit(64)
+	//} else if len(os.Args) == 2 {
+	//	runFile(os.Args[1])
+	//} else {
+	//	runPrompt()
+	//}
 }
 
 func runFile(file string) {

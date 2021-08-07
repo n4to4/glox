@@ -7,22 +7,26 @@ import (
 
 type AstPrinter struct{}
 
-func (p AstPrinter) VisitBinaryExpr(expr *Binary) interface{} {
+func (p AstPrinter) Print(expr Expr) string {
+	return expr.Accept(p).(string)
+}
+
+func (p AstPrinter) VisitBinaryExpr(expr Binary) interface{} {
 	return p.parenthesize(expr.operator.Lexeme, expr.left, expr.right)
 }
 
-func (p AstPrinter) VisitGroupingExpr(expr *Grouping) interface{} {
+func (p AstPrinter) VisitGroupingExpr(expr Grouping) interface{} {
 	return p.parenthesize("group", expr.expression)
 }
 
-func (p AstPrinter) VisitLiteralExpr(expr *Literal) interface{} {
+func (p AstPrinter) VisitLiteralExpr(expr Literal) interface{} {
 	if expr.value == nil {
 		return "nil"
 	}
-	return expr.TokenLiteral()
+	return expr.value
 }
 
-func (p AstPrinter) VisitUnaryExpr(expr *Unary) interface{} {
+func (p AstPrinter) VisitUnaryExpr(expr Unary) interface{} {
 	return p.parenthesize(expr.operator.Lexeme, expr.right)
 }
 
