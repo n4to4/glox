@@ -101,9 +101,3 @@ func generateAccept(w io.StringWriter, baseName, types string) {
 	w.WriteString(fmt.Sprintf("\treturn v.Visit%s%s(x)\n", typeName, baseName))
 	w.WriteString("}\n")
 }
-
-/*
-func (x *Binary) Accept(visitor Visitor) interface{} {
-	return visitor.VisitBinaryExpr(x)
-}
-*/

@@ -5,8 +5,6 @@ import (
 	"os"
 )
 
-// error
-
 func ErrorReport(line int, message string) {
 	report(line, "", message)
 }
