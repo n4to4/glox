@@ -8,18 +8,18 @@ import (
 func TestScanner(t *testing.T) {
 	cases := []struct {
 		source   string
-		expected []string
+		expected []TokenType
 	}{
-		{"(", []string{LEFT_PAREN, EOF}},
-		{",.-", []string{COMMA, DOT, MINUS, EOF}},
-		{"== != >= <=", []string{
+		{"(", []TokenType{LEFT_PAREN, EOF}},
+		{",.-", []TokenType{COMMA, DOT, MINUS, EOF}},
+		{"== != >= <=", []TokenType{
 			EQUAL_EQUAL,
 			BANG_EQUAL,
 			GREATER_EQUAL,
 			LESS_EQUAL,
 			EOF,
 		}},
-		{`"string"!=`, []string{STRING, BANG_EQUAL, EOF}},
+		{`"string"!=`, []TokenType{STRING, BANG_EQUAL, EOF}},
 	}
 
 	for _, cc := range cases {
@@ -82,7 +82,7 @@ func TestIdentifier(t *testing.T) {
 	cases := []struct {
 		source string
 		lexeme string
-		ttype  string
+		ttype  TokenType
 	}{
 		{"id", "id", IDENTIFIER},
 		{"name", "name", IDENTIFIER},
@@ -110,7 +110,7 @@ func TestIdentifier(t *testing.T) {
 	}
 }
 
-func assertTokenTypes(t *testing.T, toks []Token, ttypes ...string) {
+func assertTokenTypes(t *testing.T, toks []Token, ttypes ...TokenType) {
 	t.Helper()
 
 	if len(toks) != len(ttypes) {

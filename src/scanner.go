@@ -12,7 +12,7 @@ type Scanner struct {
 	current int
 	line    int
 
-	keywords map[string]string
+	keywords map[string]TokenType
 }
 
 func NewScanner(source string) *Scanner {
@@ -26,8 +26,8 @@ func NewScanner(source string) *Scanner {
 	}
 }
 
-func newKeywords() map[string]string {
-	var ks = make(map[string]string)
+func newKeywords() map[string]TokenType {
+	var ks = make(map[string]TokenType)
 
 	ks["and"] = AND
 	ks["class"] = CLASS
@@ -137,7 +137,7 @@ func (s *Scanner) advance() string {
 	return c
 }
 
-func (s *Scanner) addToken(ttype string, literal interface{}) {
+func (s *Scanner) addToken(ttype TokenType, literal interface{}) {
 	lexeme := s.source[s.start:s.current]
 	s.tokens = append(s.tokens, NewToken(ttype, lexeme, literal, s.line))
 }

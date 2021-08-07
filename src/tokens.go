@@ -3,13 +3,13 @@ package main
 import "fmt"
 
 type Token struct {
-	Ttype   string
+	Ttype   TokenType
 	Lexeme  string
 	Literal interface{}
 	line    int
 }
 
-func NewToken(ttype, lexeme string, literal interface{}, line int) Token {
+func NewToken(ttype TokenType, lexeme string, literal interface{}, line int) Token {
 	return Token{ttype, lexeme, literal, line}
 }
 
@@ -17,53 +17,55 @@ func (t *Token) String() string {
 	return fmt.Sprintf("<token %s %s %s>", t.Ttype, t.Lexeme, t.Literal)
 }
 
+type TokenType string
+
 const (
 	// Single-character tokens.
-	LEFT_PAREN  = "("
-	RIGHT_PAREN = ")"
-	LEFT_BRACE  = "{"
-	RIGHT_BRACE = "}"
+	LEFT_PAREN  = TokenType("(")
+	RIGHT_PAREN = TokenType(")")
+	LEFT_BRACE  = TokenType("{")
+	RIGHT_BRACE = TokenType("}")
 
-	COMMA     = ","
-	DOT       = "."
-	MINUS     = "-"
-	PLUS      = "+"
-	SEMICOLON = ";"
-	SLASH     = "/"
-	STAR      = "*"
+	COMMA     = TokenType(",")
+	DOT       = TokenType(".")
+	MINUS     = TokenType("-")
+	PLUS      = TokenType("+")
+	SEMICOLON = TokenType(";")
+	SLASH     = TokenType("/")
+	STAR      = TokenType("*")
 
 	// One or two character tokens.
-	BANG          = "!"
-	BANG_EQUAL    = "!="
-	EQUAL         = "="
-	EQUAL_EQUAL   = "=="
-	GREATER       = ">"
-	GREATER_EQUAL = ">="
-	LESS          = "<"
-	LESS_EQUAL    = "<="
+	BANG          = TokenType("!")
+	BANG_EQUAL    = TokenType("!=")
+	EQUAL         = TokenType("=")
+	EQUAL_EQUAL   = TokenType("==")
+	GREATER       = TokenType(">")
+	GREATER_EQUAL = TokenType(">=")
+	LESS          = TokenType("<")
+	LESS_EQUAL    = TokenType("<=")
 
 	// Literals.
-	IDENTIFIER = "IDENTIFIER"
-	STRING     = "STRING"
-	NUMBER     = "NUMBER"
+	IDENTIFIER = TokenType("IDENTIFIER")
+	STRING     = TokenType("STRING")
+	NUMBER     = TokenType("NUMBER")
 
 	// Keywords.
-	AND    = "and"
-	CLASS  = "class"
-	ELSE   = "else"
-	FALSE  = "false"
-	FUN    = "fun"
-	FOR    = "for"
-	IF     = "if"
-	NIL    = "nil"
-	OR     = "or"
-	PRINT  = "print"
-	RETURN = "return"
-	SUPER  = "super"
-	THIS   = "this"
-	TRUE   = "true"
-	VAR    = "var"
-	WHILE  = "while"
+	AND    = TokenType("and")
+	CLASS  = TokenType("class")
+	ELSE   = TokenType("else")
+	FALSE  = TokenType("false")
+	FUN    = TokenType("fun")
+	FOR    = TokenType("for")
+	IF     = TokenType("if")
+	NIL    = TokenType("nil")
+	OR     = TokenType("or")
+	PRINT  = TokenType("print")
+	RETURN = TokenType("return")
+	SUPER  = TokenType("super")
+	THIS   = TokenType("this")
+	TRUE   = TokenType("true")
+	VAR    = TokenType("var")
+	WHILE  = TokenType("while")
 
-	EOF = ""
+	EOF = TokenType("")
 )
