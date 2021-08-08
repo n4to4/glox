@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"strings"
 )
@@ -23,7 +24,7 @@ func (p AstPrinter) VisitLiteralExpr(expr Literal) interface{} {
 	if expr.value == nil {
 		return "nil"
 	}
-	return expr.value
+	return fmt.Sprintf("%v", expr.value)
 }
 
 func (p AstPrinter) VisitUnaryExpr(expr Unary) interface{} {

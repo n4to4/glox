@@ -29,7 +29,8 @@ func runFile(file string) {
 
 func runPrompt() {
 	scanner := bufio.NewScanner(os.Stdin)
-	for scanner.Scan() {
+	prompt := func() { fmt.Print("> ") }
+	for prompt(); scanner.Scan(); prompt() {
 		line := scanner.Text()
 		run(line)
 	}
