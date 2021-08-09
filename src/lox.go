@@ -4,6 +4,12 @@ import (
 	"fmt"
 )
 
+const (
+	ErrOperandMustBeANumber     = "operand must be a number"
+	ErrOperandsMustBeNumbers    = "operands must be numbers"
+	ErrOperandsMustBeNumsOrStrs = "operands must be two numbers or two strings"
+)
+
 type Lox struct {
 	//hadError bool
 }
@@ -22,4 +28,13 @@ func LoxMain() {
 
 	p := AstPrinter{}
 	fmt.Println(p.Print(&expression))
+}
+
+type RuntimeError struct {
+	token   Token
+	message string
+}
+
+func (e RuntimeError) Error() string {
+	return fmt.Sprintf("%s\n[line %d]", e.message, e.token.line)
 }

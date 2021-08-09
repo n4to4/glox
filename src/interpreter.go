@@ -16,10 +16,6 @@ func (i *Interpreter) Interpret(expression Expr) {
 	fmt.Println(stringify(value))
 }
 
-func stringify(object interface{}) string {
-	return fmt.Sprintf("%v", object)
-}
-
 func (i *Interpreter) VisitLiteralExpr(expr Literal) (interface{}, error) {
 	return expr.value, nil
 }
@@ -36,6 +32,9 @@ func (i *Interpreter) VisitUnaryExpr(expr Unary) (interface{}, error) {
 
 	switch expr.operator.Ttype {
 	case MINUS:
+		if err := checkNumberOperand(expr.operator, right); err != nil {
+			return nil, err
+		}
 		return -(right.(float64)), nil
 	case BANG:
 		return !(isTruthy(right)), nil
@@ -57,12 +56,24 @@ func (i *Interpreter) VisitBinaryExpr(expr Binary) (interface{}, error) {
 
 	switch expr.operator.Ttype {
 	case GREATER:
+		if err := checkNumberOperands(expr.operator, left, right); err != nil {
+			return nil, err
+		}
 		return left.(float64) > right.(float64), nil
 	case GREATER_EQUAL:
+		if err := checkNumberOperands(expr.operator, left, right); err != nil {
+			return nil, err
+		}
 		return left.(float64) >= right.(float64), nil
 	case LESS:
+		if err := checkNumberOperands(expr.operator, left, right); err != nil {
+			return nil, err
+		}
 		return left.(float64) < right.(float64), nil
 	case LESS_EQUAL:
+		if err := checkNumberOperands(expr.operator, left, right); err != nil {
+			return nil, err
+		}
 		return left.(float64) <= right.(float64), nil
 
 	case BANG_EQUAL:
@@ -71,6 +82,9 @@ func (i *Interpreter) VisitBinaryExpr(expr Binary) (interface{}, error) {
 		return isEqual(left, right), nil
 
 	case MINUS:
+		if err := checkNumberOperands(expr.operator, left, right); err != nil {
+			return nil, err
+		}
 		return left.(float64) - right.(float64), nil
 	case PLUS:
 		if l, ok := left.(float64); ok {
@@ -83,9 +97,16 @@ func (i *Interpreter) VisitBinaryExpr(expr Binary) (interface{}, error) {
 				return l + r, nil
 			}
 		}
+		return nil, RuntimeError{expr.operator, ErrOperandsMustBeNumsOrStrs}
 	case SLASH:
+		if err := checkNumberOperands(expr.operator, left, right); err != nil {
+			return nil, err
+		}
 		return left.(float64) / right.(float64), nil
 	case STAR:
+		if err := checkNumberOperands(expr.operator, left, right); err != nil {
+			return nil, err
+		}
 		return left.(float64) * right.(float64), nil
 	}
 
@@ -110,4 +131,27 @@ func isTruthy(object interface{}) bool {
 
 func isEqual(a, b interface{}) bool {
 	return a == b
+}
+
+func stringify(object interface{}) string {
+	return fmt.Sprintf("%v", object)
+}
+
+func checkNumberOperand(operator Token, operand interface{}) error {
+	_, ok := operand.(float64)
+	if ok {
+		return nil
+	}
+
+	return RuntimeError{operator, ErrOperandMustBeANumber}
+}
+
+func checkNumberOperands(operator Token, left, right interface{}) error {
+	_, ok1 := left.(float64)
+	_, ok2 := right.(float64)
+	if ok1 && ok2 {
+		return nil
+	}
+
+	return RuntimeError{operator, ErrOperandsMustBeNumbers}
 }
