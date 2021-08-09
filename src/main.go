@@ -52,4 +52,7 @@ func run(source string) {
 
 	fmt.Println("\nprint expr:")
 	fmt.Println(printer.Print(expr))
+
+	interpreter := Interpreter{}
+	interpreter.Interpret(expr)
 }

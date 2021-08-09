@@ -1,13 +1,17 @@
 package main
 
-//type Visitor interface {
-//	VisitBinaryExpr(expr Binary) interface{}
-//	VisitGroupingExpr(expr Grouping) interface{}
-//	VisitLiteralExpr(expr Literal) interface{}
-//	VisitUnaryExpr(expr Unary) interface{}
-//}
+import "fmt"
 
 type Interpreter struct{}
+
+func (i *Interpreter) Interpret(expression Expr) {
+	value := i.evaluate(expression)
+	fmt.Println(stringify(value))
+}
+
+func stringify(object interface{}) string {
+	return fmt.Sprintf("%v", object)
+}
 
 func (i *Interpreter) VisitLiteralExpr(expr Literal) interface{} {
 	return expr.value
