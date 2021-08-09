@@ -63,7 +63,7 @@ func generateVisitor(w io.StringWriter, baseName string, types []string) {
 	for _, t := range types {
 		splits := strings.Split(t, ":")
 		typeName := strings.Trim(splits[0], " ")
-		w.WriteString(fmt.Sprintf("\tVisit%s%s(%s %s) interface{}\n",
+		w.WriteString(fmt.Sprintf("\tVisit%s%s(%s %s) (interface{}, error)\n",
 			typeName, baseName,
 			strings.ToLower(baseName), typeName,
 		))
@@ -73,7 +73,7 @@ func generateVisitor(w io.StringWriter, baseName string, types []string) {
 
 func generateAcceptor(w io.StringWriter) {
 	w.WriteString("type Acceptor interface {\n")
-	w.WriteString("\tAccept(v Visitor) interface{}\n")
+	w.WriteString("\tAccept(v Visitor) (interface{}, error)\n")
 	w.WriteString("}\n")
 }
 
@@ -97,7 +97,7 @@ func generateAccept(w io.StringWriter, baseName, types string) {
 	splits := strings.Split(types, ":")
 	typeName := strings.Trim(splits[0], " ")
 
-	w.WriteString(fmt.Sprintf("func (x %s) Accept(v Visitor) interface{} {\n", typeName))
+	w.WriteString(fmt.Sprintf("func (x %s) Accept(v Visitor) (interface{}, error) {\n", typeName))
 	w.WriteString(fmt.Sprintf("\treturn v.Visit%s%s(x)\n", typeName, baseName))
 	w.WriteString("}\n")
 }

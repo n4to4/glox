@@ -17,7 +17,12 @@ func TestAstPrinter(t *testing.T) {
 	}
 
 	p := AstPrinter{}
-	got := p.Print(expression)
+
+	got, err := p.Print(expression)
+	if err != nil {
+		t.Fatalf("want no error, got %v", err)
+	}
+
 	want := "(* (- 123) (group 45.67))"
 
 	if want != got {

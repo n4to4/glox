@@ -2,48 +2,64 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"strings"
 )
 
 type AstPrinter struct{}
 
-func (p AstPrinter) Print(expr Expr) string {
-	return expr.Accept(p).(string)
+func (p AstPrinter) Print(expr Expr) (string, error) {
+	ret, err := expr.Accept(p)
+	if err != nil {
+		return "", err
+	}
+
+	str, ok := ret.(string)
+	if !ok {
+		return "", fmt.Errorf("not a string: %v", ret)
+	}
+
+	return str, nil
 }
 
-func (p AstPrinter) VisitBinaryExpr(expr Binary) interface{} {
+func (p AstPrinter) VisitBinaryExpr(expr Binary) (interface{}, error) {
 	return p.parenthesize(expr.operator.Lexeme, expr.left, expr.right)
 }
 
-func (p AstPrinter) VisitGroupingExpr(expr Grouping) interface{} {
+func (p AstPrinter) VisitGroupingExpr(expr Grouping) (interface{}, error) {
 	return p.parenthesize("group", expr.expression)
 }
 
-func (p AstPrinter) VisitLiteralExpr(expr Literal) interface{} {
+func (p AstPrinter) VisitLiteralExpr(expr Literal) (interface{}, error) {
 	if expr.value == nil {
-		return "nil"
+		return "nil", nil
 	}
-	return fmt.Sprintf("%v", expr.value)
+	return fmt.Sprintf("%v", expr.value), nil
 }
 
-func (p AstPrinter) VisitUnaryExpr(expr Unary) interface{} {
+func (p AstPrinter) VisitUnaryExpr(expr Unary) (interface{}, error) {
 	return p.parenthesize(expr.operator.Lexeme, expr.right)
 }
 
-func (p AstPrinter) parenthesize(name string, exprs ...Expr) string {
+func (p AstPrinter) parenthesize(name string, exprs ...Expr) (string, error) {
 	w := &strings.Builder{}
 
 	w.WriteString("(" + name)
 	for _, exp := range exprs {
 		w.WriteString(" ")
-		s, ok := exp.Accept(p).(string)
-		if !ok {
-			log.Fatalf("not a string: %v", p)
+
+		ret, err := exp.Accept(p)
+		if err != nil {
+			return "", err
 		}
+
+		s, ok := ret.(string)
+		if !ok {
+			return "", fmt.Errorf("not a string: %v", p)
+		}
+
 		w.WriteString(s)
 	}
 	w.WriteString(")")
 
-	return w.String()
+	return w.String(), nil
 }
