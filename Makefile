@@ -1,10 +1,10 @@
-generated = src/expr.go
+generated = src/expr.go src/stmt.go
 
 .PHONY: all
 all: $(generated)
 	go run ./src
 
-$(generated):
+$(generated): tool/generate.go
 	go run tool/generate.go ./src
 
 .PHONY: test

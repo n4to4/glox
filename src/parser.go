@@ -11,9 +11,37 @@ type Parser struct {
 	current int
 }
 
-func (p *Parser) Parse() Expr {
-	return p.Expression()
+func (p *Parser) Parse() []Stmt {
+	var statements []Stmt
+	for !p.isAtEnd() {
+		statements = append(statements, p.statement())
+	}
+	return statements
 }
+
+func (p *Parser) statement() Stmt {
+	if p.match(PRINT) {
+		return p.PrintStatement()
+	}
+
+	return p.ExpressionStatement()
+}
+
+func (p *Parser) PrintStatement() Stmt {
+	value := p.Expression()
+	p.consume(SEMICOLON, "Expect ';' after value.")
+	return Print{value}
+}
+
+func (p *Parser) ExpressionStatement() Stmt {
+	expr := p.Expression()
+	p.consume(SEMICOLON, "Expect ';' after expression.")
+	return Expression{expr}
+}
+
+//
+// Expr
+//
 
 func (p *Parser) Expression() Expr {
 	return p.Equality()

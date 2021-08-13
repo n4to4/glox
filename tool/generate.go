@@ -21,6 +21,11 @@ func main() {
 		"Literal  : value interface{}",
 		"Unary    : operator Token, right Expr",
 	})
+
+	defineAst(outputDir, "Stmt", []string{
+		"Expression : expression Expr",
+		"Print      : expression Expr",
+	})
 }
 
 func defineAst(outputDir, baseName string, types []string) {
@@ -41,14 +46,14 @@ func generateAst(w io.StringWriter, baseName string, types []string) {
 	w.WriteString("\n")
 	w.WriteString(fmt.Sprintf("type %s interface {\n", baseName))
 	w.WriteString("\tTokenLiteral() string\n")
-	w.WriteString(("\tAcceptor\n"))
+	w.WriteString(fmt.Sprintf("\t%sAcceptor\n", baseName))
 	w.WriteString("}\n")
 
 	w.WriteString("\n")
 	generateVisitor(w, baseName, types)
 
 	w.WriteString("\n")
-	generateAcceptor(w)
+	generateAcceptor(w, baseName)
 
 	for _, t := range types {
 		w.WriteString("\n")
@@ -59,7 +64,7 @@ func generateAst(w io.StringWriter, baseName string, types []string) {
 }
 
 func generateVisitor(w io.StringWriter, baseName string, types []string) {
-	w.WriteString("type Visitor interface {\n")
+	w.WriteString(fmt.Sprintf("type %sVisitor interface {\n", baseName))
 	for _, t := range types {
 		splits := strings.Split(t, ":")
 		typeName := strings.Trim(splits[0], " ")
@@ -71,9 +76,9 @@ func generateVisitor(w io.StringWriter, baseName string, types []string) {
 	w.WriteString("}\n")
 }
 
-func generateAcceptor(w io.StringWriter) {
-	w.WriteString("type Acceptor interface {\n")
-	w.WriteString("\tAccept(v Visitor) (interface{}, error)\n")
+func generateAcceptor(w io.StringWriter, baseName string) {
+	w.WriteString(fmt.Sprintf("type %sAcceptor interface {\n", baseName))
+	w.WriteString(fmt.Sprintf("\tAccept(v %sVisitor) (interface{}, error)\n", baseName))
 	w.WriteString("}\n")
 }
 
@@ -97,7 +102,7 @@ func generateAccept(w io.StringWriter, baseName, types string) {
 	splits := strings.Split(types, ":")
 	typeName := strings.Trim(splits[0], " ")
 
-	w.WriteString(fmt.Sprintf("func (x %s) Accept(v Visitor) (interface{}, error) {\n", typeName))
+	w.WriteString(fmt.Sprintf("func (x %s) Accept(v %sVisitor) (interface{}, error) {\n", typeName, baseName))
 	w.WriteString(fmt.Sprintf("\treturn v.Visit%s%s(x)\n", typeName, baseName))
 	w.WriteString("}\n")
 }
