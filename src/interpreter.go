@@ -7,14 +7,40 @@ import (
 
 type Interpreter struct{}
 
-func (i *Interpreter) Interpret(expression Expr) {
-	value, err := i.evaluate(expression)
+func (i *Interpreter) Interpret(stmts []Stmt) {
+	for _, stmt := range stmts {
+		if err := i.execute(stmt); err != nil {
+			log.Fatalf("error: %v\n", err)
+		}
+	}
+}
+
+//
+// Visit Stmt
+//
+
+func (i *Interpreter) VisitExpressionStmt(stmt Expression) (interface{}, error) {
+	return i.evaluate(stmt.expression)
+}
+
+func (i *Interpreter) VisitPrintStmt(stmt Print) (interface{}, error) {
+	value, err := i.evaluate(stmt.expression)
 	if err != nil {
-		log.Fatalf("error: %v", err)
+		return nil, err
 	}
 
-	fmt.Println(stringify(value))
+	fmt.Println(value)
+	return nil, nil
 }
+
+func (i *Interpreter) execute(stmt Stmt) error {
+	_, err := stmt.Accept(i)
+	return err
+}
+
+//
+// Visit Expr
+//
 
 func (i *Interpreter) VisitLiteralExpr(expr Literal) (interface{}, error) {
 	return expr.value, nil

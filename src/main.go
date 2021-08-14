@@ -40,19 +40,18 @@ func run(source string) {
 	scanner := NewScanner(source)
 	tokens := scanner.ScanTokens()
 
-	fmt.Println("print tokens: ")
-	for _, token := range tokens {
-		fmt.Println(token)
-	}
+	//fmt.Println("print tokens: ")
+	//for _, token := range tokens {
+	//	fmt.Println(token)
+	//}
 
-	//parser := Parser{tokens: tokens}
-	//expr := parser.Parse()
+	parser := Parser{tokens: tokens}
+	stmts := parser.Parse()
 
 	//printer := AstPrinter{}
-
 	//fmt.Println("\nprint expr:")
 	//fmt.Println(printer.Print(expr))
 
-	//interpreter := Interpreter{}
-	//interpreter.Interpret(expr)
+	interpreter := Interpreter{}
+	interpreter.Interpret(stmts)
 }
