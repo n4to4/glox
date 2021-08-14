@@ -3,7 +3,7 @@ package main
 import "errors"
 
 var (
-	ParseError = errors.New("parse error")
+	ErrParse = errors.New("parse error")
 )
 
 type Parser struct {
@@ -171,22 +171,22 @@ func (p *Parser) consume(ttype TokenType, message string) (Token, error) {
 
 func (p *Parser) parseError(token Token, message string) error {
 	ReportError(token, message)
-	return ParseError
+	return ErrParse
 }
 
-func (p *Parser) synchronize() {
-	p.advance()
-
-	for !p.isAtEnd() {
-		if p.previous().Ttype == SEMICOLON {
-			return
-		}
-
-		switch p.peek().Ttype {
-		case CLASS, FUN, VAR, FOR, IF, WHILE, PRINT, RETURN:
-			return
-		}
-
-		p.advance()
-	}
-}
+//func (p *Parser) synchronize() {
+//	p.advance()
+//
+//	for !p.isAtEnd() {
+//		if p.previous().Ttype == SEMICOLON {
+//			return
+//		}
+//
+//		switch p.peek().Ttype {
+//		case CLASS, FUN, VAR, FOR, IF, WHILE, PRINT, RETURN:
+//			return
+//		}
+//
+//		p.advance()
+//	}
+//}

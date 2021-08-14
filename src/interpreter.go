@@ -159,10 +159,6 @@ func isEqual(a, b interface{}) bool {
 	return a == b
 }
 
-func stringify(object interface{}) string {
-	return fmt.Sprintf("%v", object)
-}
-
 func checkNumberOperand(operator Token, operand interface{}) error {
 	_, ok := operand.(float64)
 	if ok {
