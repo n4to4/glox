@@ -41,8 +41,6 @@ func (i *Interpreter) VisitPrintStmt(stmt Print) (interface{}, error) {
 }
 
 func (i *Interpreter) VisitVarStmt(stmt Var) (interface{}, error) {
-	fmt.Printf("name=%q, initializer=%v\n", stmt.name, stmt.initializer)
-
 	if stmt.initializer == nil {
 		i.environment.define(stmt.name.Lexeme, nil)
 		return nil, nil
