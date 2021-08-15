@@ -5,7 +5,14 @@ import (
 	"log"
 )
 
-type Interpreter struct{}
+type Interpreter struct {
+	environment Environment
+}
+
+func NewInterpreter() Interpreter {
+	env := NewEnvironment()
+	return Interpreter{env}
+}
 
 func (i *Interpreter) Interpret(stmts []Stmt) {
 	for _, stmt := range stmts {
@@ -32,7 +39,21 @@ func (i *Interpreter) VisitPrintStmt(stmt Print) (interface{}, error) {
 	fmt.Println(value)
 	return nil, nil
 }
+
 func (i *Interpreter) VisitVarStmt(stmt Var) (interface{}, error) {
+	fmt.Printf("name=%q, initializer=%v\n", stmt.name, stmt.initializer)
+
+	if stmt.initializer == nil {
+		i.environment.define(stmt.name.Lexeme, nil)
+		return nil, nil
+	}
+
+	value, err := i.evaluate(*stmt.initializer)
+	if err != nil {
+		return nil, err
+	}
+
+	i.environment.define(stmt.name.Lexeme, value)
 	return nil, nil
 }
 
@@ -144,7 +165,7 @@ func (i *Interpreter) VisitBinaryExpr(expr Binary) (interface{}, error) {
 }
 
 func (i *Interpreter) VisitVariableExpr(expr Variable) (interface{}, error) {
-	return nil, nil
+	return i.environment.get(expr.name)
 }
 
 func (i *Interpreter) evaluate(expr Expr) (interface{}, error) {

@@ -14,9 +14,29 @@ type Parser struct {
 func (p *Parser) Parse() []Stmt {
 	var statements []Stmt
 	for !p.isAtEnd() {
-		statements = append(statements, p.statement())
+		statements = append(statements, p.declaration())
 	}
 	return statements
+}
+
+func (p *Parser) declaration() Stmt {
+	if p.match(VAR) {
+		return p.varDeclaration()
+	}
+	return p.statement()
+}
+
+func (p *Parser) varDeclaration() Stmt {
+	name, _ := p.consume(IDENTIFIER, "expect variable name.")
+
+	var initializer *Expr
+	if p.match(EQUAL) {
+		init := p.Expression()
+		initializer = &init
+	}
+
+	p.consume(SEMICOLON, "expect ';' aftter variable declaration.")
+	return Var{name, initializer}
 }
 
 func (p *Parser) statement() Stmt {
@@ -115,6 +135,8 @@ func (p *Parser) Primary() Expr {
 		return Literal{nil}
 	case p.match(NUMBER, STRING):
 		return Literal{p.previous().Literal}
+	case p.match(IDENTIFIER):
+		return Variable{p.previous()}
 	case p.match(LEFT_PAREN):
 		expr := p.Expression()
 		p.consume(RIGHT_PAREN, "Expect ')' after expression.")
