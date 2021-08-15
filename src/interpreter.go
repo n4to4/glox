@@ -32,6 +32,9 @@ func (i *Interpreter) VisitPrintStmt(stmt Print) (interface{}, error) {
 	fmt.Println(value)
 	return nil, nil
 }
+func (i *Interpreter) VisitVarStmt(stmt Var) (interface{}, error) {
+	return nil, nil
+}
 
 func (i *Interpreter) execute(stmt Stmt) error {
 	_, err := stmt.Accept(i)
@@ -137,6 +140,10 @@ func (i *Interpreter) VisitBinaryExpr(expr Binary) (interface{}, error) {
 	}
 
 	// unreachable
+	return nil, nil
+}
+
+func (i *Interpreter) VisitVariableExpr(expr Variable) (interface{}, error) {
 	return nil, nil
 }
 

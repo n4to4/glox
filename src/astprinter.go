@@ -40,6 +40,10 @@ func (p AstPrinter) VisitUnaryExpr(expr Unary) (interface{}, error) {
 	return p.parenthesize(expr.operator.Lexeme, expr.right)
 }
 
+func (p AstPrinter) VisitVariableExpr(expr Variable) (interface{}, error) {
+	return nil, nil
+}
+
 func (p AstPrinter) parenthesize(name string, exprs ...Expr) (string, error) {
 	w := &strings.Builder{}
 
