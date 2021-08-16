@@ -6,12 +6,12 @@ import (
 )
 
 type Interpreter struct {
-	environment Environment
+	environment *Environment
 }
 
-func NewInterpreter() Interpreter {
+func NewInterpreter() *Interpreter {
 	env := NewEnvironment()
-	return Interpreter{env}
+	return &Interpreter{env}
 }
 
 func (i *Interpreter) Interpret(stmts []Stmt) {

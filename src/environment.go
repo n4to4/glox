@@ -6,9 +6,9 @@ type Environment struct {
 	values map[string]interface{}
 }
 
-func NewEnvironment() Environment {
-	values := make(map[string]interface{})
-	return Environment{values}
+func NewEnvironment() *Environment {
+	values := make(map[string]interface{}, 10)
+	return &Environment{values}
 }
 
 func (e *Environment) define(name string, value interface{}) {
