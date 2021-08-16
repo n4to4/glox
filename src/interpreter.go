@@ -166,6 +166,19 @@ func (i *Interpreter) VisitVariableExpr(expr Variable) (interface{}, error) {
 	return i.environment.get(expr.name)
 }
 
+func (i *Interpreter) VisitAssignExpr(expr Assign) (interface{}, error) {
+	value, err := i.evaluate(expr.value)
+	if err != nil {
+		return nil, err
+	}
+
+	if i.environment.assign(expr.name, value) != err {
+		return nil, err
+	}
+
+	return value, nil
+}
+
 func (i *Interpreter) evaluate(expr Expr) (interface{}, error) {
 	return expr.Accept(i)
 }

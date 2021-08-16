@@ -44,6 +44,10 @@ func (p AstPrinter) VisitVariableExpr(expr Variable) (interface{}, error) {
 	return nil, nil
 }
 
+func (p AstPrinter) VisitAssignExpr(expr Assign) (interface{}, error) {
+	return nil, nil
+}
+
 func (p AstPrinter) parenthesize(name string, exprs ...Expr) (string, error) {
 	w := &strings.Builder{}
 

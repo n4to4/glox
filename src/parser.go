@@ -1,6 +1,9 @@
 package main
 
-import "errors"
+import (
+	"errors"
+	"log"
+)
 
 var (
 	ErrParse = errors.New("parse error")
@@ -64,7 +67,25 @@ func (p *Parser) ExpressionStatement() Stmt {
 //
 
 func (p *Parser) Expression() Expr {
-	return p.Equality()
+	return p.Assignment()
+}
+
+func (p *Parser) Assignment() Expr {
+	expr := p.Equality()
+
+	if p.match(EQUAL) {
+		equals := p.previous()
+		value := p.Assignment()
+
+		if v, ok := expr.(Variable); ok {
+			name := v.name
+			return Assign{name, value}
+		}
+
+		log.Printf("Invalid assignment target %v", equals)
+	}
+
+	return expr
 }
 
 func (p *Parser) Equality() Expr {
