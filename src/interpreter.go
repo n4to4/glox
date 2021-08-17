@@ -10,7 +10,7 @@ type Interpreter struct {
 }
 
 func NewInterpreter() *Interpreter {
-	env := NewEnvironment()
+	env := NewEnvironment(nil)
 	return &Interpreter{env}
 }
 

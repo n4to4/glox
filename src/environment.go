@@ -3,12 +3,13 @@ package main
 import "fmt"
 
 type Environment struct {
-	values map[string]interface{}
+	enclosing *Environment
+	values    map[string]interface{}
 }
 
-func NewEnvironment() *Environment {
+func NewEnvironment(enclosing *Environment) *Environment {
 	values := make(map[string]interface{})
-	return &Environment{values}
+	return &Environment{enclosing, values}
 }
 
 func (e *Environment) define(name string, value interface{}) {
