@@ -22,6 +22,10 @@ func (e *Environment) get(name Token) (interface{}, error) {
 		return value, nil
 	}
 
+	if e.enclosing != nil {
+		return e.enclosing.get(name)
+	}
+
 	return nil, RuntimeError{
 		name,
 		fmt.Sprintf("undefined variable %q", name.Lexeme),
@@ -32,6 +36,10 @@ func (e *Environment) assign(name Token, value interface{}) error {
 	if _, ok := e.values[name.Lexeme]; ok {
 		e.values[name.Lexeme] = value
 		return nil
+	}
+
+	if e.enclosing != nil {
+		return e.enclosing.assign(name, value)
 	}
 
 	return RuntimeError{name, fmt.Sprintf("undefined variable '%s'.", name.Lexeme)}

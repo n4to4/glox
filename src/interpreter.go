@@ -55,9 +55,30 @@ func (i *Interpreter) VisitVarStmt(stmt Var) (interface{}, error) {
 	return nil, nil
 }
 
+func (i *Interpreter) VisitBlockStmt(stmt Block) (interface{}, error) {
+	i.executeBlock(stmt.statements, NewEnvironment(i.environment))
+	return nil, nil
+}
+
 func (i *Interpreter) execute(stmt Stmt) error {
 	_, err := stmt.Accept(i)
 	return err
+}
+
+func (i *Interpreter) executeBlock(statements []Stmt, environment *Environment) error {
+	previous := i.environment
+	defer func() {
+		i.environment = previous
+	}()
+
+	i.environment = environment
+	for _, stmt := range statements {
+		if err := i.execute(stmt); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 //
