@@ -43,6 +43,10 @@ func (p *Parser) varDeclaration() Stmt {
 }
 
 func (p *Parser) statement() Stmt {
+	if p.match(IF) {
+		return p.IfStatement()
+	}
+
 	if p.match(PRINT) {
 		return p.PrintStatement()
 	}
@@ -63,6 +67,20 @@ func (p *Parser) ExpressionStatement() Stmt {
 	expr := p.Expression()
 	p.consume(SEMICOLON, "Expect ';' after expression.")
 	return Expression{expr}
+}
+
+func (p *Parser) IfStatement() Stmt {
+	p.consume(LEFT_PAREN, "expect '(' after 'if'")
+	condition := p.Expression()
+	p.consume(RIGHT_PAREN, "expect ')' after if condition")
+
+	var thenBranch Stmt = p.statement()
+	var elseBranch Stmt
+	if p.match(ELSE) {
+		elseBranch = p.statement()
+	}
+
+	return If{condition, &thenBranch, &elseBranch}
 }
 
 func (p *Parser) block() []Stmt {

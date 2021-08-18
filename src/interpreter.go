@@ -60,6 +60,22 @@ func (i *Interpreter) VisitBlockStmt(stmt Block) (interface{}, error) {
 	return nil, nil
 }
 
+func (i *Interpreter) VisitIfStmt(stmt If) (interface{}, error) {
+	evaled, err := i.evaluate(stmt.condition)
+	if err != nil {
+		return nil, err
+	}
+
+	if isTruthy(evaled) {
+		return nil, i.execute(*stmt.thenBranch)
+	}
+	if stmt.elseBranch != nil {
+		return nil, i.execute(*stmt.elseBranch)
+	}
+
+	return nil, nil
+}
+
 func (i *Interpreter) execute(stmt Stmt) error {
 	_, err := stmt.Accept(i)
 	return err
