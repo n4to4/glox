@@ -216,6 +216,25 @@ func (i *Interpreter) VisitAssignExpr(expr Assign) (interface{}, error) {
 	return value, nil
 }
 
+func (i *Interpreter) VisitLogicalExpr(expr Logical) (interface{}, error) {
+	left, err := i.evaluate(expr.left)
+	if err != nil {
+		return nil, err
+	}
+
+	if expr.operator.Ttype == OR {
+		if isTruthy(left) {
+			return left, nil
+		}
+	} else {
+		if !isTruthy(left) {
+			return left, nil
+		}
+	}
+
+	return i.evaluate(expr.right)
+}
+
 func (i *Interpreter) evaluate(expr Expr) (interface{}, error) {
 	return expr.Accept(i)
 }

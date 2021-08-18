@@ -103,7 +103,7 @@ func (p *Parser) Expression() Expr {
 }
 
 func (p *Parser) Assignment() Expr {
-	expr := p.Equality()
+	expr := p.Or()
 
 	if p.match(EQUAL) {
 		equals := p.previous()
@@ -115,6 +115,30 @@ func (p *Parser) Assignment() Expr {
 		}
 
 		log.Printf("Invalid assignment target %v", equals)
+	}
+
+	return expr
+}
+
+func (p *Parser) Or() Expr {
+	expr := p.And()
+
+	for p.match(OR) {
+		operator := p.previous()
+		right := p.And()
+		expr = Logical{expr, operator, right}
+	}
+
+	return expr
+}
+
+func (p *Parser) And() Expr {
+	expr := p.Equality()
+
+	for p.match(AND) {
+		operator := p.previous()
+		right := p.Equality()
+		expr = Logical{expr, operator, right}
 	}
 
 	return expr
