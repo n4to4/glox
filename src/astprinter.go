@@ -22,7 +22,7 @@ func (p AstPrinter) Print(expr Expr) (string, error) {
 }
 
 func (p AstPrinter) VisitBinaryExpr(expr Binary) (interface{}, error) {
-	return p.parenthesize(expr.operator.Lexeme, expr.left, expr.right)
+	return p.parenthesize(expr.operator.lexeme, expr.left, expr.right)
 }
 
 func (p AstPrinter) VisitGroupingExpr(expr Grouping) (interface{}, error) {
@@ -37,7 +37,7 @@ func (p AstPrinter) VisitLiteralExpr(expr Literal) (interface{}, error) {
 }
 
 func (p AstPrinter) VisitUnaryExpr(expr Unary) (interface{}, error) {
-	return p.parenthesize(expr.operator.Lexeme, expr.right)
+	return p.parenthesize(expr.operator.lexeme, expr.right)
 }
 
 func (p AstPrinter) VisitVariableExpr(expr Variable) (interface{}, error) {

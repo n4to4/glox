@@ -42,7 +42,7 @@ func (i *Interpreter) VisitPrintStmt(stmt Print) (interface{}, error) {
 
 func (i *Interpreter) VisitVarStmt(stmt Var) (interface{}, error) {
 	if stmt.initializer == nil {
-		i.environment.define(stmt.name.Lexeme, nil)
+		i.environment.define(stmt.name.lexeme, nil)
 		return nil, nil
 	}
 
@@ -51,7 +51,7 @@ func (i *Interpreter) VisitVarStmt(stmt Var) (interface{}, error) {
 		return nil, err
 	}
 
-	i.environment.define(stmt.name.Lexeme, value)
+	i.environment.define(stmt.name.lexeme, value)
 	return nil, nil
 }
 
@@ -133,7 +133,7 @@ func (i *Interpreter) VisitUnaryExpr(expr Unary) (interface{}, error) {
 		return nil, err
 	}
 
-	switch expr.operator.Ttype {
+	switch expr.operator.ttype {
 	case MINUS:
 		if err := checkNumberOperand(expr.operator, right); err != nil {
 			return nil, err
@@ -157,7 +157,7 @@ func (i *Interpreter) VisitBinaryExpr(expr Binary) (interface{}, error) {
 		return nil, err
 	}
 
-	switch expr.operator.Ttype {
+	switch expr.operator.ttype {
 	case GREATER:
 		if err := checkNumberOperands(expr.operator, left, right); err != nil {
 			return nil, err
@@ -240,7 +240,7 @@ func (i *Interpreter) VisitLogicalExpr(expr Logical) (interface{}, error) {
 		return nil, err
 	}
 
-	if expr.operator.Ttype == OR {
+	if expr.operator.ttype == OR {
 		if isTruthy(left) {
 			return left, nil
 		}

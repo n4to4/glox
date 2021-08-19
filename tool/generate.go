@@ -52,7 +52,6 @@ func generateAst(w io.StringWriter, baseName string, types []string) {
 	w.WriteString("package main\n")
 	w.WriteString("\n")
 	w.WriteString(fmt.Sprintf("type %s interface {\n", baseName))
-	w.WriteString("\tTokenLiteral() string\n")
 	w.WriteString(fmt.Sprintf("\t%sAcceptor\n", baseName))
 	w.WriteString("}\n")
 
@@ -100,9 +99,6 @@ func generateType(w io.StringWriter, types string) {
 		w.WriteString(fmt.Sprintf("\t%s\n", field))
 	}
 	w.WriteString("}\n")
-	w.WriteString("\n")
-
-	w.WriteString(fmt.Sprintf(`func (x %s) TokenLiteral() string { return "" }`+"\n", typeName))
 }
 
 func generateAccept(w io.StringWriter, baseName, types string) {

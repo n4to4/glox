@@ -39,13 +39,13 @@ func TestScanString(t *testing.T) {
 	}
 
 	tok := toks[0]
-	if tok.Ttype != STRING {
-		t.Errorf("token type want %q got %q", STRING, tok.Ttype)
+	if tok.ttype != STRING {
+		t.Errorf("token type want %q got %q", STRING, tok.ttype)
 	}
 
 	wantLiteral := "string"
-	if tok.Literal != wantLiteral {
-		t.Errorf("literal want %q got %q", wantLiteral, tok.Literal)
+	if tok.literal != wantLiteral {
+		t.Errorf("literal want %q got %q", wantLiteral, tok.literal)
 	}
 }
 
@@ -67,11 +67,11 @@ func TestScanNumber(t *testing.T) {
 			}
 
 			tok := toks[0]
-			if tok.Ttype != NUMBER {
-				t.Errorf("token type want %q got %q", NUMBER, tok.Ttype)
+			if tok.ttype != NUMBER {
+				t.Errorf("token type want %q got %q", NUMBER, tok.ttype)
 			}
 
-			if num, ok := tok.Literal.(float64); !ok || num != cc.expected {
+			if num, ok := tok.literal.(float64); !ok || num != cc.expected {
 				t.Errorf("want %f got %f", cc.expected, num)
 			}
 		})
@@ -99,12 +99,12 @@ func TestIdentifier(t *testing.T) {
 			}
 
 			tok := toks[0]
-			if tok.Ttype != cc.ttype {
-				t.Errorf("token type want %q got %q", cc.ttype, tok.Ttype)
+			if tok.ttype != cc.ttype {
+				t.Errorf("token type want %q got %q", cc.ttype, tok.ttype)
 			}
 
-			if tok.Lexeme != cc.lexeme {
-				t.Errorf("lexeme want %q got %q", cc.lexeme, tok.Lexeme)
+			if tok.lexeme != cc.lexeme {
+				t.Errorf("lexeme want %q got %q", cc.lexeme, tok.lexeme)
 			}
 		})
 	}
@@ -118,8 +118,8 @@ func assertTokenTypes(t *testing.T, toks []Token, ttypes ...TokenType) {
 	}
 
 	for i, tok := range toks {
-		if tok.Ttype != ttypes[i] {
-			t.Errorf("want token type %q, got %q", ttypes[i], tok.Ttype)
+		if tok.ttype != ttypes[i] {
+			t.Errorf("want token type %q, got %q", ttypes[i], tok.ttype)
 		}
 	}
 }

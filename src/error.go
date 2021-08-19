@@ -14,9 +14,9 @@ func report(line int, where, message string) {
 }
 
 func ReportError(token Token, message string) {
-	if token.Ttype == EOF {
+	if token.ttype == EOF {
 		report(token.line, " at end", message)
 	} else {
-		report(token.line, " at '"+token.Lexeme+"'", message)
+		report(token.line, " at '"+token.lexeme+"'", message)
 	}
 }

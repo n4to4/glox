@@ -17,7 +17,7 @@ func (e *Environment) define(name string, value interface{}) {
 }
 
 func (e *Environment) get(name Token) (interface{}, error) {
-	value, ok := e.values[name.Lexeme]
+	value, ok := e.values[name.lexeme]
 	if ok {
 		return value, nil
 	}
@@ -28,13 +28,13 @@ func (e *Environment) get(name Token) (interface{}, error) {
 
 	return nil, RuntimeError{
 		name,
-		fmt.Sprintf("undefined variable %q", name.Lexeme),
+		fmt.Sprintf("undefined variable %q", name.lexeme),
 	}
 }
 
 func (e *Environment) assign(name Token, value interface{}) error {
-	if _, ok := e.values[name.Lexeme]; ok {
-		e.values[name.Lexeme] = value
+	if _, ok := e.values[name.lexeme]; ok {
+		e.values[name.lexeme] = value
 		return nil
 	}
 
@@ -42,5 +42,5 @@ func (e *Environment) assign(name Token, value interface{}) error {
 		return e.enclosing.assign(name, value)
 	}
 
-	return RuntimeError{name, fmt.Sprintf("undefined variable '%s'.", name.Lexeme)}
+	return RuntimeError{name, fmt.Sprintf("undefined variable '%s'.", name.lexeme)}
 }
