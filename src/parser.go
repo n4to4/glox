@@ -50,6 +50,11 @@ func (p *Parser) statement() Stmt {
 	if p.match(PRINT) {
 		return p.PrintStatement()
 	}
+
+	if p.match(WHILE) {
+		return p.WhileStatement()
+	}
+
 	if p.match(LEFT_BRACE) {
 		return Block{p.block()}
 	}
@@ -81,6 +86,15 @@ func (p *Parser) IfStatement() Stmt {
 	}
 
 	return If{condition, &thenBranch, &elseBranch}
+}
+
+func (p *Parser) WhileStatement() Stmt {
+	p.consume(LEFT_PAREN, "expect '(' after while")
+	condition := p.Expression()
+	p.consume(RIGHT_PAREN, "expect ')' after condition")
+	body := p.statement()
+
+	return While{condition, body}
 }
 
 func (p *Parser) block() []Stmt {
