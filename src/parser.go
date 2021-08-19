@@ -43,6 +43,10 @@ func (p *Parser) varDeclaration() Stmt {
 }
 
 func (p *Parser) statement() Stmt {
+	if p.match(FOR) {
+		return p.ForStatement()
+	}
+
 	if p.match(IF) {
 		return p.IfStatement()
 	}
@@ -95,6 +99,53 @@ func (p *Parser) WhileStatement() Stmt {
 	body := p.statement()
 
 	return While{condition, body}
+}
+
+func (p *Parser) ForStatement() Stmt {
+	p.consume(LEFT_PAREN, "expect '(' after 'for'")
+
+	var initializer *Stmt
+	if p.match(SEMICOLON) {
+		initializer = nil
+	} else if p.match(VAR) {
+		stmt := p.varDeclaration()
+		initializer = &stmt
+	} else {
+		exp := p.ExpressionStatement()
+		initializer = &exp
+	}
+
+	var condition *Expr = nil
+	if !p.check(SEMICOLON) {
+		cond := p.Expression()
+		condition = &cond
+	}
+	p.consume(SEMICOLON, "expect ';' after loop condition")
+
+	var increment *Expr = nil
+	if !p.check(RIGHT_PAREN) {
+		exp := p.Expression()
+		increment = &exp
+	}
+	p.consume(RIGHT_PAREN, "expect ')' after ")
+
+	body := p.statement()
+
+	if increment != nil {
+		body = Block{[]Stmt{body, Expression{*increment}}}
+	}
+
+	if condition == nil {
+		var lit Expr = Literal{true}
+		condition = &lit
+	}
+	body = While{*condition, body}
+
+	if initializer != nil {
+		body = Block{[]Stmt{*initializer, body}}
+	}
+
+	return body
 }
 
 func (p *Parser) block() []Stmt {
