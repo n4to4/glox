@@ -52,6 +52,10 @@ func (p AstPrinter) VisitLogicalExpr(expr Logical) (interface{}, error) {
 	return nil, nil
 }
 
+func (p AstPrinter) VisitCallExpr(expr Call) (interface{}, error) {
+	return nil, nil
+}
+
 func (p AstPrinter) parenthesize(name string, exprs ...Expr) (string, error) {
 	w := &strings.Builder{}
 

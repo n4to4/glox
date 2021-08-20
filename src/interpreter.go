@@ -253,6 +253,10 @@ func (i *Interpreter) VisitLogicalExpr(expr Logical) (interface{}, error) {
 	return i.evaluate(expr.right)
 }
 
+func (i *Interpreter) VisitCallExpr(expr Call) (interface{}, error) {
+	return nil, nil
+}
+
 func (i *Interpreter) evaluate(expr Expr) (interface{}, error) {
 	return expr.Accept(i)
 }

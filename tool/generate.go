@@ -18,6 +18,7 @@ func main() {
 	defineAst(outputDir, "Expr", []string{
 		"Assign   : name Token, value Expr",
 		"Binary   : left Expr, operator Token, right Expr",
+		"Call     : callee Expr, paren Token, arguments []Expr",
 		"Grouping : expression Expr",
 		"Literal  : value interface{}",
 		"Logical  : left Expr, operator Token, right Expr",
