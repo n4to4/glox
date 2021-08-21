@@ -285,6 +285,11 @@ func (p *Parser) finishCall(callee Expr) Expr {
 	arguments := []Expr{}
 	if !p.check(RIGHT_PAREN) {
 		for {
+			if len(arguments) >= 255 {
+				// todo: no panic
+				panic("Can't have more than 255 arguments")
+			}
+
 			arguments = append(arguments, p.expression())
 
 			if !p.match(COMMA) {

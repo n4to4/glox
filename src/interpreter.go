@@ -254,7 +254,22 @@ func (i *Interpreter) VisitLogicalExpr(expr Logical) (interface{}, error) {
 }
 
 func (i *Interpreter) VisitCallExpr(expr Call) (interface{}, error) {
-	return nil, nil
+	callee, err := i.evaluate(expr.callee)
+	if err != nil {
+		return nil, err
+	}
+
+	var arguments []interface{}
+	for _, argument := range expr.arguments {
+		evaled, err := i.evaluate(argument)
+		if err != nil {
+			return nil, err
+		}
+		arguments = append(arguments, evaled)
+	}
+
+	function := callee.(LoxCallable)
+	return function.Call(i, arguments), nil
 }
 
 func (i *Interpreter) evaluate(expr Expr) (interface{}, error) {
