@@ -268,7 +268,19 @@ func (i *Interpreter) VisitCallExpr(expr Call) (interface{}, error) {
 		arguments = append(arguments, evaled)
 	}
 
-	function := callee.(LoxCallable)
+	function, ok := callee.(LoxCallable)
+	if !ok {
+		return nil, RuntimeError{
+			expr.paren, "can only call functions and classes",
+		}
+	}
+	if len(arguments) != function.Arity() {
+		return nil, RuntimeError{
+			expr.paren,
+			fmt.Sprintf("expected %d arguments but got %d",
+				function.Arity(), len(arguments)),
+		}
+	}
 	return function.Call(i, arguments), nil
 }
 
