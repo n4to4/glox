@@ -3,15 +3,32 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 )
+
+type LoxClock struct{}
+
+func (c LoxClock) Arity() int {
+	return 0
+}
+func (c LoxClock) Call(interpreter *Interpreter, arguments []interface{}) interface{} {
+	t := time.Now()
+	ut := float64(t.UnixMilli()) / 1000.0
+	return ut
+}
+func (c LoxClock) String() string {
+	return "<native fn>"
+}
 
 type Interpreter struct {
 	environment *Environment
 }
 
 func NewInterpreter() *Interpreter {
-	env := NewEnvironment(nil)
-	return &Interpreter{env}
+	globals := NewEnvironment(nil)
+	globals.define("clock", LoxClock{})
+
+	return &Interpreter{globals}
 }
 
 func (i *Interpreter) Interpret(stmts []Stmt) {
