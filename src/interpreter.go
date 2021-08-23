@@ -111,6 +111,10 @@ func (i *Interpreter) VisitWhileStmt(stmt While) (interface{}, error) {
 	return nil, nil
 }
 
+func (i *Interpreter) VisitFunctionStmt(fn Function) (interface{}, error) {
+	return nil, nil
+}
+
 func (i *Interpreter) execute(stmt Stmt) error {
 	_, err := stmt.Accept(i)
 	return err

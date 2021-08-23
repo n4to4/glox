@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"log"
 )
 
@@ -23,6 +24,9 @@ func (p *Parser) Parse() []Stmt {
 }
 
 func (p *Parser) declaration() Stmt {
+	if p.match(FUN) {
+		return p.function("function")
+	}
 	if p.match(VAR) {
 		return p.varDeclaration()
 	}
@@ -40,6 +44,34 @@ func (p *Parser) varDeclaration() Stmt {
 
 	p.consume(SEMICOLON, "expect ';' aftter variable declaration.")
 	return Var{name, initializer}
+}
+
+func (p *Parser) function(kind string) Function {
+	name, _ := p.consume(IDENTIFIER, fmt.Sprintf("expect %s name", kind))
+	p.consume(LEFT_PAREN, fmt.Sprintf("expect '(' after %s name", kind))
+
+	var parameters []Token
+	if !p.check(RIGHT_PAREN) {
+		for {
+			if len(parameters) >= 255 {
+				// todo: error
+				panic("can't have more than 255 parameters")
+			}
+
+			param, _ := p.consume(IDENTIFIER, "expect parameter name")
+			parameters = append(parameters, param)
+
+			if !p.match(COMMA) {
+				break
+			}
+		}
+	}
+	p.consume(RIGHT_PAREN, "expect ')' after parameters")
+
+	p.consume(LEFT_BRACE, fmt.Sprintf("expect '{' before %s body", kind))
+	body := p.block()
+
+	return Function{name, parameters, body}
 }
 
 func (p *Parser) statement() Stmt {
