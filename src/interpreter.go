@@ -21,6 +21,7 @@ func (c LoxClock) String() string {
 }
 
 type Interpreter struct {
+	globals     *Environment
 	environment *Environment
 }
 
@@ -28,7 +29,7 @@ func NewInterpreter() *Interpreter {
 	globals := NewEnvironment(nil)
 	globals.define("clock", LoxClock{})
 
-	return &Interpreter{globals}
+	return &Interpreter{globals, globals}
 }
 
 func (i *Interpreter) Interpret(stmts []Stmt) {
@@ -111,7 +112,9 @@ func (i *Interpreter) VisitWhileStmt(stmt While) (interface{}, error) {
 	return nil, nil
 }
 
-func (i *Interpreter) VisitFunctionStmt(fn Function) (interface{}, error) {
+func (i *Interpreter) VisitFunctionStmt(stmt Function) (interface{}, error) {
+	function := LoxFunction{stmt}
+	i.environment.define(stmt.name.lexeme, function)
 	return nil, nil
 }
 

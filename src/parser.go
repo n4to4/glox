@@ -116,12 +116,13 @@ func (p *Parser) ifStatement() Stmt {
 	p.consume(RIGHT_PAREN, "expect ')' after if condition")
 
 	var thenBranch Stmt = p.statement()
-	var elseBranch Stmt
+	var elseBranch *Stmt = nil
 	if p.match(ELSE) {
-		elseBranch = p.statement()
+		els := p.statement()
+		elseBranch = &els
 	}
 
-	return If{condition, &thenBranch, &elseBranch}
+	return If{condition, &thenBranch, elseBranch}
 }
 
 func (p *Parser) whileStatement() Stmt {
