@@ -6,6 +6,9 @@ import (
 	"time"
 )
 
+//
+// native functions
+//
 type LoxClock struct{}
 
 func (c LoxClock) Arity() int {
@@ -19,6 +22,10 @@ func (c LoxClock) Call(interpreter *Interpreter, arguments []interface{}) interf
 func (c LoxClock) String() string {
 	return "<native fn>"
 }
+
+//--------------------------------------------------------------------------------
+// interpreter
+//
 
 type Interpreter struct {
 	globals     *Environment
@@ -116,6 +123,16 @@ func (i *Interpreter) VisitFunctionStmt(stmt Function) (interface{}, error) {
 	function := LoxFunction{stmt}
 	i.environment.define(stmt.name.lexeme, function)
 	return nil, nil
+}
+
+func (i *Interpreter) VisitReturnStmt(stmt Return) (interface{}, error) {
+	var value interface{} = nil
+	if stmt.value != nil {
+		v, _ := i.evaluate(*stmt.value)
+		value = v
+	}
+
+	return nil, ReturnValue{value}
 }
 
 func (i *Interpreter) execute(stmt Stmt) error {

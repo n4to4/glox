@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type LoxFunction struct {
 	declaration Function
@@ -16,7 +19,12 @@ func (f LoxFunction) Call(interpreter *Interpreter, arguments []interface{}) int
 		environment.define(f.declaration.params[i].lexeme, arguments[i])
 	}
 
-	interpreter.executeBlock(f.declaration.body, environment)
+	err := interpreter.executeBlock(f.declaration.body, environment)
+	var returnValue ReturnValue
+	if errors.As(err, &returnValue) {
+		return returnValue.value
+	}
+
 	return nil
 }
 
