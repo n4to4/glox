@@ -120,7 +120,7 @@ func (i *Interpreter) VisitWhileStmt(stmt While) (interface{}, error) {
 }
 
 func (i *Interpreter) VisitFunctionStmt(stmt Function) (interface{}, error) {
-	function := LoxFunction{stmt}
+	function := LoxFunction{stmt, i.environment}
 	i.environment.define(stmt.name.lexeme, function)
 	return nil, nil
 }
