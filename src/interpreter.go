@@ -30,13 +30,15 @@ func (c LoxClock) String() string {
 type Interpreter struct {
 	globals     *Environment
 	environment *Environment
+	locals      map[*Expr]int
 }
 
 func NewInterpreter() *Interpreter {
 	globals := NewEnvironment(nil)
 	globals.define("clock", LoxClock{})
+	locals := make(map[*Expr]int, 1)
 
-	return &Interpreter{globals, globals}
+	return &Interpreter{globals, globals, locals}
 }
 
 func (i *Interpreter) Interpret(stmts []Stmt) {
@@ -45,6 +47,10 @@ func (i *Interpreter) Interpret(stmts []Stmt) {
 			log.Fatalf("error: %v\n", err)
 		}
 	}
+}
+
+func (i *Interpreter) resolve(expr Expr, depth int) {
+	i.locals[&expr] = depth
 }
 
 //
