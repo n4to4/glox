@@ -3,16 +3,16 @@ package main
 type scope map[string]bool
 
 type Resolver struct {
-	interpreter Interpreter
+	interpreter *Interpreter
 	scopes      []scope
 }
 
-func NewResolver(i Interpreter) Resolver {
+func NewResolver(interpreter *Interpreter) Resolver {
 	var scopes []scope
-	resolver := Resolver{
-		i, scopes,
+	return Resolver{
+		interpreter,
+		scopes,
 	}
-	return resolver
 }
 
 func (r *Resolver) VisitBlockStmt(stmt Block) (interface{}, error) {
