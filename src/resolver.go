@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type scope map[string]bool
 
 type Resolver struct {
@@ -37,7 +39,8 @@ func (r *Resolver) resolveExpr(expr Expr) {
 }
 
 func (r *Resolver) beginScope() {
-	s := make(scope, 1)
+	s := make(scope)
+	//fmt.Printf("r.scopes: %+v\n", r.scopes)
 	r.scopes = append(r.scopes, s)
 }
 
@@ -74,8 +77,11 @@ func (r *Resolver) define(name Token) {
 func (r *Resolver) VisitVariableExpr(expr Variable) (interface{}, error) {
 	if len(r.scopes) != 0 {
 		scope := r.scopes[len(r.scopes)-1]
-		if !scope[expr.name.lexeme] {
-			panic("can't read local variable in its own initializer")
+		if val, ok := scope[expr.name.lexeme]; ok && !val {
+			//fmt.Printf("scope: %+v\n", scope)
+			//fmt.Printf("r.scopes: %+v\n", r.scopes)
+			panic(fmt.Sprintf("can't read local variable in its own initializer: %q",
+				expr.name.lexeme))
 		}
 	}
 	r.resolveLocal(expr, expr.name)

@@ -30,13 +30,13 @@ func (c LoxClock) String() string {
 type Interpreter struct {
 	globals     *Environment
 	environment *Environment
-	locals      map[*Expr]int
+	locals      map[Expr]int
 }
 
 func NewInterpreter() *Interpreter {
 	globals := NewEnvironment(nil)
 	globals.define("clock", LoxClock{})
-	locals := make(map[*Expr]int)
+	locals := make(map[Expr]int)
 
 	return &Interpreter{globals, globals, locals}
 }
@@ -50,7 +50,7 @@ func (i *Interpreter) Interpret(stmts []Stmt) {
 }
 
 func (i *Interpreter) resolve(expr Expr, depth int) {
-	i.locals[&expr] = depth
+	i.locals[expr] = depth
 }
 
 //
@@ -270,14 +270,25 @@ func (i *Interpreter) VisitVariableExpr(expr Variable) (interface{}, error) {
 }
 
 func (i *Interpreter) lookUpVariable(name Token, expr Expr) (interface{}, error) {
-	if distance, ok := i.locals[&expr]; ok {
-		return i.globals.get(name)
-	} else {
-		value, ok := i.environment.getAt(distance, name.lexeme)
-		if !ok {
-			log.Fatalf("variable not found %q", name.lexeme)
-		}
+	//	fmt.Printf(`// lookup: name: %q
+	//    locals: %v
+	//    globals: %v
+	//`,
+	//		name.lexeme, i.locals, i.globals,
+	//	)
+
+	if distance, ok := i.locals[expr]; ok {
+		value, _ := i.environment.getAt(distance, name.lexeme)
+
+		//		fmt.Printf("// local: value: %v\n", value)
+
 		return value, nil
+	} else {
+		value, err := i.globals.get(name)
+
+		//		fmt.Printf("// global: value: %v\n", value)
+
+		return value, err
 	}
 }
 
@@ -287,8 +298,12 @@ func (i *Interpreter) VisitAssignExpr(expr Assign) (interface{}, error) {
 		return nil, err
 	}
 
-	if i.environment.assign(expr.name, value) != err {
-		return nil, err
+	var exp Expr = expr
+	distance, ok := i.locals[exp]
+	if ok {
+		i.environment.assignAt(distance, expr.name, value)
+	} else {
+		i.globals.assign(expr.name, value)
 	}
 
 	return value, nil

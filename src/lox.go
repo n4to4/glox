@@ -61,5 +61,13 @@ func (l *Lox) run(source string) {
 	parser := Parser{tokens: tokens}
 	stmts := parser.Parse()
 
+	// stop if there was a syntax error
+	if l.hadError {
+		return
+	}
+
+	resolver := NewResolver(l.interpreter)
+	resolver.resolveStmts(stmts)
+
 	l.interpreter.Interpret(stmts)
 }

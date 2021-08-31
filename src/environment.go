@@ -57,3 +57,8 @@ func (e *Environment) assign(name Token, value interface{}) error {
 
 	return RuntimeError{name, fmt.Sprintf("undefined variable '%s'.", name.lexeme)}
 }
+
+func (e *Environment) assignAt(distance int, name Token, value interface{}) error {
+	e.ancestor(distance).values[name.lexeme] = value
+	return nil
+}
