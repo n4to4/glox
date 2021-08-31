@@ -270,24 +270,11 @@ func (i *Interpreter) VisitVariableExpr(expr Variable) (interface{}, error) {
 }
 
 func (i *Interpreter) lookUpVariable(name Token, expr Expr) (interface{}, error) {
-	//	fmt.Printf(`// lookup: name: %q
-	//    locals: %v
-	//    globals: %v
-	//`,
-	//		name.lexeme, i.locals, i.globals,
-	//	)
-
 	if distance, ok := i.locals[expr]; ok {
 		value, _ := i.environment.getAt(distance, name.lexeme)
-
-		//		fmt.Printf("// local: value: %v\n", value)
-
 		return value, nil
 	} else {
 		value, err := i.globals.get(name)
-
-		//		fmt.Printf("// global: value: %v\n", value)
-
 		return value, err
 	}
 }
