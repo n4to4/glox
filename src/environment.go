@@ -32,6 +32,19 @@ func (e *Environment) get(name Token) (interface{}, error) {
 	}
 }
 
+func (e *Environment) getAt(distance int, name string) (interface{}, bool) {
+	obj, ok := e.ancestor(distance).values[name]
+	return obj, ok
+}
+
+func (e *Environment) ancestor(distance int) *Environment {
+	environment := e
+	for i := 0; i < distance; i++ {
+		environment = environment.enclosing
+	}
+	return environment
+}
+
 func (e *Environment) assign(name Token, value interface{}) error {
 	if _, ok := e.values[name.lexeme]; ok {
 		e.values[name.lexeme] = value

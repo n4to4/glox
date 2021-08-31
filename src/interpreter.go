@@ -36,7 +36,7 @@ type Interpreter struct {
 func NewInterpreter() *Interpreter {
 	globals := NewEnvironment(nil)
 	globals.define("clock", LoxClock{})
-	locals := make(map[*Expr]int, 1)
+	locals := make(map[*Expr]int)
 
 	return &Interpreter{globals, globals, locals}
 }
@@ -265,7 +265,20 @@ func (i *Interpreter) VisitBinaryExpr(expr Binary) (interface{}, error) {
 }
 
 func (i *Interpreter) VisitVariableExpr(expr Variable) (interface{}, error) {
-	return i.environment.get(expr.name)
+	//return i.environment.get(expr.name)
+	return i.lookUpVariable(expr.name, expr)
+}
+
+func (i *Interpreter) lookUpVariable(name Token, expr Expr) (interface{}, error) {
+	if distance, ok := i.locals[&expr]; ok {
+		return i.globals.get(name)
+	} else {
+		value, ok := i.environment.getAt(distance, name.lexeme)
+		if !ok {
+			log.Fatalf("variable not found %q", name.lexeme)
+		}
+		return value, nil
+	}
 }
 
 func (i *Interpreter) VisitAssignExpr(expr Assign) (interface{}, error) {
